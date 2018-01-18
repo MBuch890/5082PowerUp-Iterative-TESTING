@@ -7,7 +7,13 @@
 
 package org.usfirst.frc.team5082.robot;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -23,7 +29,12 @@ public class Robot extends IterativeRobot {
 	private static final String CustomAuto = "My Auto";
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
-
+	
+	DifferentialDrive drive;
+	Joystick left, right;
+	Victor motorLeft, motorRight; //TODO: change this when you have an idea of the hardware happening
+	Encoder enLeft, enRight;
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -33,6 +44,10 @@ public class Robot extends IterativeRobot {
 		m_chooser.addDefault("Default Auto", DefaultAuto);
 		m_chooser.addObject("My Auto", CustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
+		
+		drive = new DifferentialDrive(motorLeft, motorRight);
+		left = new Joystick(1);
+		right = new Joystick(2);
 	}
 
 	/**
@@ -65,7 +80,7 @@ public class Robot extends IterativeRobot {
 				break;
 			case DefaultAuto:
 			default:
-				// Put default auto code here
+				//and default
 				break;
 		}
 	}
@@ -75,6 +90,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		drive.tankDrive(left.getThrottle(), right.getThrottle());
 	}
 
 	/**
@@ -83,4 +99,5 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 	}
+	
 }
