@@ -25,15 +25,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends IterativeRobot {
-	private static final String DefaultAuto = "Default";
-	private static final String CustomAuto = "My Auto";
-	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	
 	DifferentialDrive drive;
 	Joystick left, right;
 	Victor motorLeft, motorRight; //TODO: change this when you have an idea of the hardware happening
 	Encoder enLeft, enRight;
+	Timer timer;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -41,13 +39,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		m_chooser.addDefault("Default Auto", DefaultAuto);
-		m_chooser.addObject("My Auto", CustomAuto);
-		SmartDashboard.putData("Auto choices", m_chooser);
-		
 		drive = new DifferentialDrive(motorLeft, motorRight);
 		left = new Joystick(1);
 		right = new Joystick(2);
+		timer = new Timer();
 	}
 
 	/**
@@ -63,10 +58,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		m_autoSelected = m_chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Auto selected: " + m_autoSelected);
+		timer.reset();
+		timer.start();
 	}
 
 	/**
@@ -74,15 +67,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		switch (m_autoSelected) {
-			case CustomAuto:
-				// Put custom auto code here
-				break;
-			case DefaultAuto:
-			default:
-				//and default
-				break;
-		}
+		
+		if(timer.get() < 1)
+			drive.arcadeDrive(0.5, 0);
+		else
+			drive.stopMotor();
+		
 	}
 
 	/**
@@ -90,7 +80,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		drive.tankDrive(left.getThrottle(), right.getThrottle());
+		drive.tankDrive(left.getY(), right.getY());
 	}
 
 	/**
